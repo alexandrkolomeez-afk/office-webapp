@@ -3,119 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Единый Портал</title>
+    <title>Бронирование авто</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; padding-bottom: 70px; }
-        .card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        h2 { margin-top: 0; font-size: 18px; color: #333; }
-        .tabs { display: flex; margin-bottom: 15px; background: #e4e6e9; border-radius: 8px; overflow: hidden; }
-        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; color: #666; }
-        .tab.active { background: #0078d4; color: #fff; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0; padding: 15px;
+        }
+        h2 { margin-top: 0; text-align: center; }
+        .tabs { display: flex; margin-bottom: 20px; background: var(--tg-theme-secondary-bg-color, #f0f0f0); border-radius: 10px; overflow: hidden; }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; }
+        .tab.active { background: var(--tg-theme-button-color, #3390ec); color: var(--tg-theme-button-text-color, #ffffff); }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
         input[type="date"], input[type="time"], input[type="text"] {
-            width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px;
+            width: 100%; box-sizing: border-box; padding: 10px;
+            border: 1px solid var(--tg-theme-hint-color, #ccc);
+            border-radius: 8px; background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
         }
         .btn {
-            width: 100%; padding: 12px; border: none; border-radius: 8px; background: #0078d4; color: #fff;
+            width: 100%; padding: 12px; border: none; border-radius: 8px;
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
             font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;
         }
-        .slot { padding: 8px; margin: 5px 0; border-radius: 5px; font-size: 14px; display: flex; justify-content: space-between; }
-        .free { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-        .busy { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .timeline { margin-top: 20px; padding: 10px; border-radius: 8px; background: var(--tg-theme-secondary-bg-color, #f0f0f0); }
+        .slot { padding: 8px; margin: 5px 0; border-radius: 5px; font-size: 14px; display: flex; justify-content: space-between; align-items: center;}
+        .slot.free { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .slot.busy { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
-
-    <div class="card">
-        <h2>🚗 Бронирование Авто (Amvera API)</h2>
-        
-        <div class="tabs">
-            <div class="tab active" onclick="selectCar(1, this)">Москвич</div>
-            <div class="tab" onclick="selectCar(2, this)">Логан</div>
-        </div>
-
-        <div class="form-group">
-            <label>Ваша Фамилия (Для записи):</label>
-            <input type="text" id="fio" placeholder="Например: Иванов" required>
-        </div>
-
-        <div class="form-group">
-            <label>Дата поездки:</label>
-            <input type="date" id="date" required>
-        </div>
-
-        <div id="timeline_box" style="margin-top: 15px;">
-            <div style="text-align:center; color:#888;">Загрузка расписания с сервера...</div>
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <div class="form-group" style="flex: 1;">
-                <label>С (время):</label>
-                <input type="time" id="time_start" value="09:00">
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label>До (время):</label>
-                <input type="time" id="time_end" value="11:00">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Задача поездки:</label>
-            <input type="text" id="comment" placeholder="Куда едем?">
-        </div>
-
-        <button class="btn" onclick="bookCar()">🚗 Забронировать</button>
+    <h2>🚗 Транспорт</h2>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="selectCar(1, this)">🚘 Москвич</div>
+        <div class="tab" onclick="selectCar(2, this)">🚙 Логан</div>
     </div>
 
+    <div class="form-group">
+        <label>Дата поездки:</label>
+        <input type="date" id="date" required>
+    </div>
+
+    <div class="timeline" id="timeline_box">
+        </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <div class="form-group" style="flex: 1;">
+            <label>С (время):</label>
+            <input type="time" id="time_start" value="09:00" required>
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>До (время):</label>
+            <input type="time" id="time_end" value="11:00" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Задача поездки:</label>
+        <input type="text" id="comment" placeholder="Например: В министерство" required>
+    </div>
+
+    <button class="btn" onclick="sendData()">Забронировать</button>
+
     <script>
-        // АДРЕС ВАШЕГО СЕРВЕРА НА AMVERA (Замените, если он другой)
-        const API_URL = "https://project-office-bot-rosenberg.amvera.io";
+        let tg = window.Telegram.WebApp;
+        tg.expand();
         
         let selectedCarId = 1;
         let allBookings = [];
 
-        document.getElementById('date').valueAsDate = new Date();
+        // Получаем сегодняшнюю дату
+        let dateInput = document.getElementById('date');
+        let today = new Date();
+        dateInput.valueAsDate = today;
 
-        // 1. ЗАГРУЖАЕМ ДАННЫЕ С СЕРВЕРА НАПРЯМУЮ!
-        async function fetchBookings() {
+        // 1. ЧИТАЕМ ДАННЫЕ ИЗ БОТА (приклеенные к ссылке)
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        if (dataParam) {
             try {
-                let response = await fetch(`${API_URL}/api/get_cars`);
-                allBookings = await response.json();
-                renderTimeline();
-            } catch (e) {
-                document.getElementById('timeline_box').innerHTML = "<div style='color:red;'>Ошибка подключения к серверу Amvera</div>";
-            }
+                // Распаковываем данные о занятых машинах
+                allBookings = JSON.parse(decodeURIComponent(dataParam));
+            } catch(e) { console.error("Ошибка чтения данных", e); }
         }
 
-        // 2. РИСУЕМ РАСПИСАНИЕ
+        // 2. ФУНКЦИЯ ОТРИСОВКИ РАСПИСАНИЯ
         function renderTimeline() {
-            let selectedDate = document.getElementById('date').value;
+            let selectedDate = dateInput.value;
             let box = document.getElementById('timeline_box');
-            box.innerHTML = ``;
+            box.innerHTML = `<h3 style="margin-top:0; text-align:center; font-size:16px;">Расписание на ${selectedDate}</h3>`;
 
+            // Находим брони только для выбранной машины и даты
             let todaysBookings = allBookings.filter(b => b.c === selectedCarId && b.d === selectedDate);
+            
+            // Собираем карту занятых часов
             let busyMap = {}; 
             todaysBookings.forEach(b => {
                 let startH = parseInt(b.t.split(':')[0]);
-                for(let i=0; i<b.dur; i++) busyMap[startH + i] = b.fio;
+                for(let i=0; i<b.dur; i++) {
+                    busyMap[startH + i] = b.fio; // Запоминаем, кто занял
+                }
             });
 
+            // Рисуем блоки с 08:00 до 18:00
             for(let h=8; h<=18; h++) {
                 let slot = document.createElement('div');
                 let timeStr = `${h < 10 ? '0'+h : h}:00`;
                 
                 if (busyMap[h]) {
                     slot.className = 'slot busy';
-                    slot.innerHTML = `<span>🚫 <b>${timeStr}</b></span> <span>Занято: ${busyMap[h]}</span>`;
+                    slot.innerHTML = `<span>🚫 <b>${timeStr}</b></span> <span style="font-size:12px;">Занято: ${busyMap[h]}</span>`;
                 } else {
                     slot.className = 'slot free';
-                    slot.innerHTML = `<span>✅ <b>${timeStr}</b></span> <span>Свободно</span>`;
+                    slot.innerHTML = `<span>✅ <b>${timeStr}</b></span> <span style="font-size:12px;">Свободно</span>`;
                 }
                 box.appendChild(slot);
             }
         }
 
+        // Переключение машин
         function selectCar(id, element) {
             selectedCarId = id;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -123,40 +134,27 @@
             renderTimeline();
         }
 
-        document.getElementById('date').addEventListener('change', renderTimeline);
+        // Реакция на изменение даты календаря
+        dateInput.addEventListener('change', renderTimeline);
 
-        // 3. ОТПРАВЛЯЕМ БРОНЬ НА СЕРВЕР
-        async function bookCar() {
+        // Рисуем первый раз при открытии окна
+        renderTimeline();
+
+        function sendData() {
             let data = {
                 car_id: selectedCarId,
-                fio: document.getElementById('fio').value,
                 date: document.getElementById('date').value,
                 start_time: document.getElementById('time_start').value,
                 end_time: document.getElementById('time_end').value,
                 comment: document.getElementById('comment').value
             };
-
-            if(!data.fio || !data.comment) { alert("Заполните ФИО и Задачу!"); return; }
-
-            try {
-                let response = await fetch(`${API_URL}/api/book_car`, {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(data)
-                });
-                
-                let result = await response.json();
-                if(result.status === "success") {
-                    alert("Ура! Машина успешно забронирована.");
-                    fetchBookings(); // Обновляем расписание!
-                } else {
-                    alert("Ошибка: " + result.message);
-                }
-            } catch (e) { alert("Ошибка сети"); }
+            if(!data.date || !data.comment) {
+                tg.showAlert("Пожалуйста, заполните дату и задачу поездки!");
+                return;
+            }
+            tg.sendData(JSON.stringify(data));
+            tg.close();
         }
-
-        // Запуск при открытии
-        fetchBookings();
     </script>
 </body>
 </html>
